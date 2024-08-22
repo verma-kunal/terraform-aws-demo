@@ -1,36 +1,33 @@
 const express = require("express");
-const mysql = require("mysql2");
 const dotenv = require("dotenv");
+const mysql = require("mysql2");
 const path = require("path");
 
-// Load environment variables from .env file
+// Load environment variables
 dotenv.config();
 
 const app = express();
 
-// Serve static files from the "public" directory
+// Set the public directory for static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Create MySQL connection
+// connect to db
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASS,
   database: process.env.DB_NAME,
 });
 
-// Connect to MySQL
-db.connect((err) => {
-  if (err) {
-    console.error("Database connection failed: " + err.stack);
-    return;
-  }
-  console.log("Connected to database.");
+// Route to serve the HTML file
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Simple route to fetch all users
-app.get("/users", (req, res) => {
-  db.query("SELECT * FROM users", (err, results) => {
+const tableName = process.env.TABLE_NAME;
+app.get(`/${tableName}`, (req, res) => {
+  const query = `SELECT * FROM ${tableName}`;
+  db.query(query, (err, results) => {
     if (err) {
       return res.status(500).send("Database query failed.");
     }
@@ -38,8 +35,14 @@ app.get("/users", (req, res) => {
   });
 });
 
+// test connection
+db.connect((err) => {
+  if (err) throw err;
+  console.log("Connected to database!");
+});
+
 // Start the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
