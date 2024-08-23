@@ -6,6 +6,17 @@ body {
   color: #333;
 }
 
+.logo {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;
+}
+
+#tf-logo {
+  width: 100px;
+  height: 100px;
+}
+
 h1 {
   text-align: center;
   color: #333;

@@ -4,7 +4,7 @@ const mysql = require("mysql2");
 const path = require("path");
 
 // Load environment variables
-dotenv.config();
+dotenv.config({path: ".env.local"}); // change path acc. (default: .env)
 
 const app = express();
 
